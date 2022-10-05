@@ -6,7 +6,7 @@
 /*   By: snair <snair@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 12:10:26 by snair             #+#    #+#             */
-/*   Updated: 2022/10/04 12:10:28 by snair            ###   ########.fr       */
+/*   Updated: 2022/10/05 14:31:39 by snair            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,9 @@ only one fork to be taken and setting status to dead
 killing the philo once time_to_die is reached*/
 static int	one_philo(t_philo *philo)
 {
-	if (!pthread_mutex_lock(&philo->fork[philo->fork_right]))
-		print_log(*philo, "has taken a fork", GREEN);
-	else
-		error("one_philo mutex");
-	philo->life_status = DEAD;
+	pthread_mutex_lock(&philo->fork[philo->fork_right]);
+	print_log(*philo, "has taken a fork", GREEN);
+	time_spent(philo->time_die);
 	return (0);
 }
 
@@ -77,23 +75,20 @@ void	*philo_life(void *arg)
 	philo = (t_philo *)arg;
 	while (1)
 	{
-		if (pthread_mutex_lock(philo->death_mutex))
-			break ;
-		if (philo->life_status == DEAD)
-		{
-			if (pthread_mutex_unlock(philo->death_mutex))
-				break ;
-			break ;
-		}
-		if (pthread_mutex_unlock(philo->death_mutex))
-			break ;
-		if (eat_routine(philo))
-			break ;
-		if (!philo->eat_num)
-			return (NULL);
-		sleep_routine(philo);
 		print_log(*philo, "is thinking", RED);
 		time_spent(1);
+		if (eat_routine(philo))
+			break ;
+		sleep_routine(philo);
+		if (!philo->eat_num)
+			return (NULL);
+		pthread_mutex_lock(philo->death_mutex);
+		if (philo->life_status == DEAD)
+		{
+			pthread_mutex_unlock(philo->death_mutex);
+			break ;
+		}
+		pthread_mutex_unlock(philo->death_mutex);
 	}
 	return (NULL);
 }

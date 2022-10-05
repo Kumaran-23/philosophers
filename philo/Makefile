@@ -6,7 +6,7 @@ routine.c error_check.c
 HEADER = philo.h
 OBJ = $(SRC:.c=.o)
 CC = gcc
-FLAGS = -g -Wall -Werror -Wextra -pthread
+FLAGS = -g -Wall -Werror -Wextra -pthread 
 
 GREEN		=	\033[1;92m
 YELLOW		=	\033[1;93m

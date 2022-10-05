@@ -6,7 +6,7 @@
 /*   By: snair <snair@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 12:08:52 by snair             #+#    #+#             */
-/*   Updated: 2022/10/04 12:09:00 by snair            ###   ########.fr       */
+/*   Updated: 2022/10/05 14:20:24 by snair            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <limits.h>
+# include <stdbool.h>
 
 # define ALIVE 0
 # define DEAD 1
@@ -34,6 +35,7 @@ typedef struct s_philo
 {
 	int				id;
 	long int		last_ate;
+	int				ate;
 	int				fork_left;
 	int				fork_right;
 	long int		start_time;
@@ -89,6 +91,7 @@ int					init_table(t_global *table, char **argv);
 void				*philo_life(void *arg);
 
 /*death_eat_check*/
+int					meal_count(t_philo *philo);
 int					check_death(t_philo *philo);
 void				*check_routine(void *arg);
 

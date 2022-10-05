@@ -6,35 +6,41 @@
 /*   By: snair <snair@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 12:10:52 by snair             #+#    #+#             */
-/*   Updated: 2022/10/04 12:10:54 by snair            ###   ########.fr       */
+/*   Updated: 2022/10/05 13:21:19 by snair            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
 /*to end program once number of times to eat reaches 0 or continue if not*/
-static int	meal_count(t_global *table, int i)
+int	meal_count(t_philo *philo)
 {
-	pthread_mutex_lock(table->philo[i].eat_amount);
-	if (!table->philo[i].eat_num)
+	pthread_mutex_lock(philo->eat_amount);
+	if (!philo->eat_num)
 	{
-		pthread_mutex_unlock(table->philo[i].eat_amount);
+		pthread_mutex_unlock(philo->eat_amount);
 		return (0);
 	}
-	pthread_mutex_unlock(table->philo[i].eat_amount);
+	pthread_mutex_unlock(philo->eat_amount);
 	return (1);
 }
 
-/*to check if a philo has dead by comparing time last ate to time to die and if
-(current_time_ms - last ate) >= time to die, philo life status is set to DEAD*/
+/*to check if a philo has dead by comparing 
+(time last ate + time to die) <= current_time_ms, 
+philo life status is set to DEAD*/
 int	check_death(t_philo *philo)
 {
 	long	time;
+	long	death;
 
 	pthread_mutex_lock(philo->eat_time);
-	time = current_time_ms() - philo->last_ate;
+	if (philo->last_ate == 0)
+		time = current_time_ms() - philo->start_time;
+	else
+		time = current_time_ms();
+	death = philo->time_die + philo->last_ate;
 	pthread_mutex_unlock(philo->eat_time);
-	if (time >= philo->time_die)
+	if (time >= death)
 	{
 		pthread_mutex_lock(philo->death_mutex);
 		philo->life_status = DEAD;
@@ -67,11 +73,13 @@ void	*check_routine(void *arg)
 	t_global	*table;
 	int			i;
 
+	i = 0;
 	table = (t_global *)arg;
 	while (1)
 	{
-		i = 0;
-		if (!meal_count(table, i))
+		if (table->philo_num == i)
+			i = 0;
+		if (!meal_count(&table->philo[i]))
 			return (NULL);
 		if (check_death(&table->philo[i]) == DEAD)
 		{

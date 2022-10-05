@@ -6,7 +6,7 @@
 /*   By: snair <snair@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 12:10:16 by snair             #+#    #+#             */
-/*   Updated: 2022/10/04 12:10:18 by snair            ###   ########.fr       */
+/*   Updated: 2022/10/05 14:23:32 by snair            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ static int	init_philo(t_global *table)
 		table->philo[i].time_eat = table->time_eat;
 		table->philo[i].start_time = table->start_time;
 		table->philo[i].eat_num = table->eat_num;
+		table->philo[i].ate = table->eat_num;
 		philo_mutex(table, i);
 	}
 	free(philo);

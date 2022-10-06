@@ -6,7 +6,7 @@
 /*   By: snair <snair@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 12:10:26 by snair             #+#    #+#             */
-/*   Updated: 2022/10/06 20:02:25 by snair            ###   ########.fr       */
+/*   Updated: 2022/10/05 19:33:12 by snair            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,12 +45,9 @@ static int	eat_routine(t_philo *philo)
 {
 	take_fork(philo);
 	pthread_mutex_lock(philo->eat_time);
-	print_log(*philo, "is eating", YELLOW);
 	philo->last_ate = current_time_ms();
-	pthread_mutex_lock(philo->eat_amount);
-	philo->eat_num--;
-	pthread_mutex_unlock(philo->eat_amount);
 	pthread_mutex_unlock(philo->eat_time);
+	print_log(*philo, "is eating", YELLOW);
 	time_spent(philo->time_eat);
 	if (philo->philo_num != 1)
 	{
@@ -78,15 +75,22 @@ void	*philo_life(void *arg)
 	{
 		if (!philo->eat_num)
 			return (NULL);
+		//printf("%da\n", philo->eat_num);
 		print_log(*philo, "is thinking", RED);
 		time_spent(1);
 		if (eat_routine(philo))
 			break ;
-		print_log(*philo, "is sleeping", PURPLE);
-		time_spent(philo->time_sleep);
+		sleep_routine(philo);
+		pthread_mutex_lock(philo->eat_amount);
+		philo->eat_num--;
+		pthread_mutex_unlock(philo->eat_amount);
+		//printf("%db\n", philo->eat_num);
+		//printf("%dc\n", philo->life_status);
 		pthread_mutex_lock(philo->death_mutex);
 		if (philo->life_status == DEAD)
 		{
+			if (philo->eat_num == 1)
+				philo->life_status = DEAD;
 			pthread_mutex_unlock(philo->death_mutex);
 			break ;
 		}

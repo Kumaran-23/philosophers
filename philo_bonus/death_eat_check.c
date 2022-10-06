@@ -6,7 +6,7 @@
 /*   By: snair <snair@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 12:10:52 by snair             #+#    #+#             */
-/*   Updated: 2022/10/06 20:04:15 by snair            ###   ########.fr       */
+/*   Updated: 2022/10/05 19:22:09 by snair            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void	*check_routine(void *arg)
 	t_global	*table;
 	int			i;
 
-	i = 0;
+	//i = 0;
 	table = (t_global *)arg;
 	while (1)
 	{
@@ -81,14 +81,12 @@ void	*check_routine(void *arg)
 			i = 0;
 		if (check_death(&table->philo[i]) == DEAD)
 		{
-			if (!meal_count(&table->philo[i]))
-				return (NULL);
 			set_death(table);
 			print_log(table->philo[i], "died", CYAN);
 			return (NULL);
 		}
-		//if (!meal_count(&table->philo[i]))
-		//	return (NULL);
+		if (!meal_count(&table->philo[i]))
+			return (NULL);
 		i++;
 	}
 }

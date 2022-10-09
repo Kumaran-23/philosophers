@@ -6,12 +6,13 @@
 /*   By: snair <snair@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 12:10:03 by snair             #+#    #+#             */
-/*   Updated: 2022/10/06 15:18:28 by snair            ###   ########.fr       */
+/*   Updated: 2022/10/09 13:58:33 by snair            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
+/*creates a thread for each philosopher as well as a thread to check for death*/
 void	threads_create(t_global *table)
 {
 	int			i;

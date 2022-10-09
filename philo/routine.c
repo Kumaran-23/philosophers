@@ -6,7 +6,7 @@
 /*   By: snair <snair@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 12:10:26 by snair             #+#    #+#             */
-/*   Updated: 2022/10/06 20:02:25 by snair            ###   ########.fr       */
+/*   Updated: 2022/10/09 15:32:42 by snair            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,8 @@ static int	take_fork(t_philo *philo)
 	if (philo->philo_num == 1)
 		return (one_philo(philo));
 	pthread_mutex_lock(&philo->fork[philo->fork_left]);
-	//print_fork(*philo, "has taken a fork", FORK_1);
 	print_log(*philo, "has taken a fork", GREEN);
 	pthread_mutex_lock(&philo->fork[philo->fork_right]);
-	//print_fork(*philo, "has taken a fork", FORK_2);
 	print_log(*philo, "has taken a fork", GREEN);
 	return (0);
 }
@@ -47,9 +45,6 @@ static int	eat_routine(t_philo *philo)
 	pthread_mutex_lock(philo->eat_time);
 	print_log(*philo, "is eating", YELLOW);
 	philo->last_ate = current_time_ms();
-	pthread_mutex_lock(philo->eat_amount);
-	philo->eat_num--;
-	pthread_mutex_unlock(philo->eat_amount);
 	pthread_mutex_unlock(philo->eat_time);
 	time_spent(philo->time_eat);
 	if (philo->philo_num != 1)
@@ -59,16 +54,15 @@ static int	eat_routine(t_philo *philo)
 	}
 	if (philo->philo_num == 1)
 		pthread_mutex_unlock(&philo->fork[philo->fork_right]);
+	pthread_mutex_lock(philo->eat_amount);
+	philo->eat_num--;
+	pthread_mutex_unlock(philo->eat_amount);
 	return (0);
 }
 
-/*Once done eating, philo goes to sleep for time_to_sleep amount of time*/
-void	sleep_routine(t_philo *philo)
-{
-	print_log(*philo, "is sleeping", PURPLE);
-	time_spent(philo->time_sleep);
-}
-
+/*function to pass into thread, time spent after thinking is to ensure that
+one philo does not monopolize taking forks, if a philo dies thread ends, 
+if a philo has done eating specificied number of times that philo thread ends*/
 void	*philo_life(void *arg)
 {
 	t_philo		*philo;
@@ -76,12 +70,13 @@ void	*philo_life(void *arg)
 	philo = (t_philo *)arg;
 	while (1)
 	{
-		if (!philo->eat_num)
-			return (NULL);
 		print_log(*philo, "is thinking", RED);
-		time_spent(1);
+		if (!philo->id % 2)
+			time_spent(philo->time_eat / 2);
 		if (eat_routine(philo))
 			break ;
+		if (!philo->eat_num)
+			return (NULL);
 		print_log(*philo, "is sleeping", PURPLE);
 		time_spent(philo->time_sleep);
 		pthread_mutex_lock(philo->death_mutex);

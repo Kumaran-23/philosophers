@@ -6,7 +6,7 @@
 /*   By: snair <snair@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 12:10:52 by snair             #+#    #+#             */
-/*   Updated: 2022/10/06 20:04:15 by snair            ###   ########.fr       */
+/*   Updated: 2022/10/09 15:35:37 by snair            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,8 @@ int	check_death(t_philo *philo)
 	long	death;
 
 	pthread_mutex_lock(philo->eat_time);
-	if (philo->last_ate == 0)
-		time = current_time_ms() - philo->start_time;
-	else
-		time = current_time_ms();
-	death = philo->time_die + philo->last_ate;
+	time = current_time_ms() - philo->last_ate;
+	death = philo->time_die;
 	pthread_mutex_unlock(philo->eat_time);
 	if (time >= death)
 	{
@@ -51,7 +48,7 @@ int	check_death(t_philo *philo)
 }
 
 /*to set all philos life_status to DEAD because if not the philo that dies
-states gets printed but program continues running*/
+states gets printed after death*/
 static int	set_death(t_global *table)
 {
 	int	i;
@@ -87,8 +84,7 @@ void	*check_routine(void *arg)
 			print_log(table->philo[i], "died", CYAN);
 			return (NULL);
 		}
-		//if (!meal_count(&table->philo[i]))
-		//	return (NULL);
 		i++;
 	}
+	return (NULL);
 }

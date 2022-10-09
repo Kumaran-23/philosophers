@@ -6,13 +6,13 @@
 /*   By: snair <snair@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 12:10:16 by snair             #+#    #+#             */
-/*   Updated: 2022/10/06 19:46:41 by snair            ###   ########.fr       */
+/*   Updated: 2022/10/09 15:23:01 by snair            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-/*allocate memory and initialize fork mutex*/
+/*allocate memory and initialize one fork per philo*/
 static int	init_forks(t_global *table, t_philo *philo)
 {
 	int	i;
@@ -30,32 +30,11 @@ static int	init_forks(t_global *table, t_philo *philo)
 	return (0);
 }
 
-/* odd and even numbered philos get their fork orders changed. 
-This is because the order in which philosophers take their forks matters.
-For example with 3 philos:
-- Philo 1 takes fork number 0 and fork number 1
-- Philo 2 takes fork 1 and fork 2
-- Philo 3 takes fork 2 and fork 0
-If philo 1 takes fork 0, philo 2 takes fork 1 and philo 3 takes fork 2,
-deadlock occures as each philosopher will be waiting for their other fork 
-to become availble.
-By switching the order: 
-- Philo 1 takes fork 0 and then fork 1
-- Philo 2 takes fork 2 and then fork 1
-- Philo 3 takes fork 2 and then fork 0
-Because philo 1 goes firs and has taken fork 0 first then fork 1 
-and philo 2 has taken fork 2, philo 3 will have to wait untill both 
-philo 1 and philo 2 done eating before either of philo 3's forks become avalible.
-*/
+/*to comply with norm*/
 static void	fork_order(t_global *table, int i)
 {
-	table->philo[i].fork_left = (i + 1) % table->philo_num;
-	table->philo[i].fork_right = i;
-	if (table->philo[i].id % 2)
-	{
-		table->philo[i].fork_left = i;
-		table->philo[i].fork_right = (i + 1) % table->philo_num;
-	}
+	table->philo[i].fork_left = i;
+	table->philo[i].fork_right = (i + 1) % table->philo_num;
 }
 
 /*initialize all other mutex values for philo struct, 
@@ -91,6 +70,7 @@ static int	init_philo(t_global *table)
 		table->philo[i].time_eat = table->time_eat;
 		table->philo[i].start_time = table->start_time;
 		table->philo[i].eat_num = table->eat_num;
+		table->philo[i].last_ate = current_time_ms();
 		philo_mutex(table, i);
 	}
 	free(philo);

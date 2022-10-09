@@ -6,7 +6,7 @@
 /*   By: snair <snair@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 12:11:04 by snair             #+#    #+#             */
-/*   Updated: 2022/10/06 08:55:45 by snair            ###   ########.fr       */
+/*   Updated: 2022/10/07 08:12:05 by snair            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,12 @@ int	ft_atoi(const char *str)
 void	print_error(int num)
 {
 	if (num == 1)
-		printf("Only positive numbers are valid and values below MAX INT\n");
+	{
+		printf("Only positive numbers are valid\n");
+		printf("Number of philosophers should be below 200\n");
+		printf("time_to_ options should not be below sixty ms\n");
+		printf("if number_of_time_to_eat is present it has to be above 0\n");
+	}
 	else if (num == 2)
 	{
 		printf("Argument format:\n");
@@ -70,8 +75,8 @@ void	print_error(int num)
 
 int	arg_check(t_global *table, char **argv)
 {
-	if (table->philo_num <= 0 || table->time_die <= 0
-		|| table->time_eat <= 0 || table->time_sleep <= 0)
+	if (table->philo_num <= 0 || table->time_die < 60
+		|| table->time_eat < 60 || table->time_sleep < 60)
 	{
 		print_error(1);
 		return (1);
@@ -81,7 +86,7 @@ int	arg_check(t_global *table, char **argv)
 		print_error(1);
 		return (1);
 	}
-	if (table->philo_num > INT_MAX || table->time_die > INT_MAX
+	if (table->philo_num > 200 || table->time_die > INT_MAX
 		|| table->time_eat > INT_MAX || table->time_sleep > INT_MAX)
 	{
 		print_error(1);

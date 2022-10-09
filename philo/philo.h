@@ -6,7 +6,7 @@
 /*   By: snair <snair@student.42kl.edu.my>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/10/04 12:08:52 by snair             #+#    #+#             */
-/*   Updated: 2022/10/06 19:46:14 by snair            ###   ########.fr       */
+/*   Updated: 2022/10/09 12:41:25 by snair            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ typedef struct s_philo
 {
 	int				id;
 	long int		last_ate;
+	int				all_ate;
 	int				fork_left;
 	int				fork_right;
 	long int		start_time;
